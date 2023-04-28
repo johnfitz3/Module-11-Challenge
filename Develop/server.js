@@ -1,9 +1,22 @@
 const fs = require('fs');
 const express = require('express');
-const app = express();
+const path = require('path');
+const util = require('util')
 
+//creating server
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(express.urlencoded({ extended: true}));
 app.use(express.json());
 
+
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
+ 
+
+//middleware
+app.use(express.static('./develop/public'));
 
 //GET ROUTE NOTES.HTML
 app.get('/notes', (req, res) => {
