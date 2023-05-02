@@ -1,31 +1,45 @@
 const express = require('express');
 const router = express.Router()
 
-router.get('/api/notes', (req, res) => {
-    const note =req.body;
-    readFileAsync('./develop/db/db', 'utf8')
-    .then(function(data) {
-      
-    })
-  })
+const path = require('path');
   
+const { notes } = require("./db/db");
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('public'));
+
+
+//creating note
+function createNewNote(body, notesArray) {
+  const note = body;
+  notesArray.push(note);
+  fs.writeFileSync(
+    path.join(__dirname, './db/db.json'),
+    JSON.stringify({ notes: notesArray }, null, 2)
+  );
+  return note;
+};  
   
-  
+
   // Set up a POST route to save notes to db.json
-  router.post("/api/notes", (req, res) => {
-      const note = req.body;
-      const notesData = JSON.parse(fs.readFileSync("./db.json"));
-      note.id = notesData.length + 1;
-      notesData.push(note);
-      fs.writeFileSync("./db.json", JSON.stringify(notesData));
-      res.json(note);
-    });
-    
-    // Set up a GET route to retrieve notes from db.json
-    router.get("/api/notes", (req, res) => {
-      const notesData = JSON.parse(fs.readFileSync("./db.json"));
-      res.json(notesData);
-    });
+  router.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+  });
+  
+  router.get('/notes', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/notes.html'));
+  });
+  
+  router.get('/api/notes', (req, res) => {
+    res.json(notes);
+  });
+  
+  router.post('/api/notes', (req, res) => {
+    req.body.id = generateUniqueId();
+    const note = createNewNote(req.body, notes);
+    res.json(note);
+  });
 
     
 //GET ROUTE NOTES.HTML
