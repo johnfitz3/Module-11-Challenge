@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const notes = require('../db/notes');
 
 function createNewNote(body, notesArray) {
     const note = body;
